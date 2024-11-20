@@ -6,6 +6,7 @@ import { ThreeDots } from "react-loader-spinner"
 function App() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
   const [colorRows, setColorRows] = useState(false)
   const [sorting, setSorting] = useState<SortBy>(SortBy.NONE)
   const [filterByCountry, setFilterByCountry] = useState('')
@@ -13,13 +14,19 @@ function App() {
 
   useEffect(() => {
     setLoading(true)
-    fetch('https://randomuser.me/api/?results=100')
-    .then(res => res.json())
+    fetch('https://randomuser.me/api/?results=10')
+    .then(res => {
+      if (!res.ok) throw new Error ('Error fetching users')
+      return res.json()
+    })
     .then(data => {
       setUsers(data.results)
       originalUsers.current = data.results
     })
-    .catch(error => console.error(error))
+    .catch(error => {
+      setError(true)
+      console.error(error)
+    })
     .finally(() => setLoading(false))
   }, [])
 
@@ -92,7 +99,8 @@ function App() {
         </div>
       </header>
       <main>
-        {loading ?
+        {!error ?
+          loading ?
           <ThreeDots
             visible={true}
             height="80"
@@ -103,12 +111,17 @@ function App() {
             wrapperStyle={{margin: '16px'}}
           />
           :
+          users.length > 0 ?
           <UsersTable 
             users={sortedUsers} 
             colorRows={colorRows} 
             handleDelete={handleDelete} 
             handleChangeSort={handleChangeSort}
           />
+          :
+          <p>No hay usuarios</p>
+        :
+        <p>Ha ocurrido un error</p>               
         }
       </main>
     </>
