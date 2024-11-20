@@ -3,6 +3,15 @@ import { SortBy, User } from "./lib/types"
 import UsersTable from "./components/UsersTable"
 import { ThreeDots } from "react-loader-spinner"
 
+const fetchUsers = async (page: number) => {
+  return await fetch(`https://randomuser.me/api/?results=10&seed=test&page=${page}`)
+    .then(res => {
+      if (!res.ok) throw new Error ('Error fetching users')
+      return res.json()
+    })
+    .then(data => data.results)
+} 
+
 function App() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(false)
@@ -17,21 +26,17 @@ function App() {
     setLoading(true)
     setError(false)
     
-    fetch(`https://randomuser.me/api/?results=10&seed=test&page=${currentPage}`)
-    .then(res => {
-      if (!res.ok) throw new Error ('Error fetching users')
-      return res.json()
-    })
-    .then(data => {
-      const updatedUsers = users.concat(data.results)
-      setUsers(updatedUsers)
-      originalUsers.current = updatedUsers
-    })
-    .catch(error => {
-      setError(true)
-      console.error(error)
-    })
-    .finally(() => setLoading(false))
+    fetchUsers(currentPage)
+      .then(results => {
+        const updatedUsers = users.concat(results)
+        setUsers(updatedUsers)
+        originalUsers.current = updatedUsers
+      })
+      .catch(error => {
+        setError(true)
+        console.error(error)
+      })
+      .finally(() => setLoading(false))
   }, [currentPage])
 
   const toggleRowsColors = () => {
