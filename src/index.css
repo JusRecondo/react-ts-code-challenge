@@ -1,0 +1,116 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+}
+
+header {
+  text-align: center;
+  padding: 24px 16px;
+}
+
+h1 {
+  font-size: 44px;
+  line-height: 1.1;
+  margin: 16px;
+}
+
+.actions-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.actions-container label {
+  flex-basis: 100%
+}
+
+.actions-container input {
+  margin: 4px;
+}
+
+
+main {
+  display: flex;
+  justify-content: center;
+  max-width: 1000px;
+  margin: auto;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  text-align: center;
+}
+
+table.color-rows tr:nth-child(odd):not(:only-child) {
+  background-color: #414141;
+}
+
+th {
+  font-size: 18px;
+}
+
+th.clickable {
+  cursor: pointer;
+}
+
+th.clickable:hover {
+  text-decoration: underline;
+}
+
+td {
+  padding: 4px 0;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #151515;
+  color: #fbfbfb;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
