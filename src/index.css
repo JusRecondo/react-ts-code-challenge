@@ -79,10 +79,6 @@ table.color-rows tr:nth-child(odd):not(:only-child) {
   background-color: #414141;
 }
 
-th {
-  font-size: 18px;
-}
-
 th.clickable {
   cursor: pointer;
 }
@@ -93,6 +89,7 @@ th.clickable:hover {
 
 td {
   padding: 4px 0;
+  font-size: 14px;
 }
 
 button {
@@ -116,4 +113,14 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (min-width: 768px) {
+  th {
+    font-size: 18px;
+  }
+  
+  td {
+    font-size: 16px;
+  }
 }
