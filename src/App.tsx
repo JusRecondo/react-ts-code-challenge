@@ -1,43 +1,21 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useMemo, useState } from "react"
 import { SortBy, User } from "./lib/types"
 import UsersTable from "./components/UsersTable"
-import { ThreeDots } from "react-loader-spinner"
-
-const fetchUsers = async (page: number) => {
-  return await fetch(`https://randomuser.me/api/?results=10&seed=test&page=${page}`)
-    .then(res => {
-      if (!res.ok) throw new Error ('Error fetching users')
-      return res.json()
-    })
-    .then(data => data.results)
-} 
+import { ThreeDots } from "react-loader-spinner" 
+import { useUsers } from "./hooks/useUsers"
 
 function App() {
-  const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
+  const {
+    isLoading,
+    isError,
+    users,
+    fetchNextPage,
+    hasNextPage
+  } = useUsers()
+
   const [colorRows, setColorRows] = useState(false)
   const [sorting, setSorting] = useState<SortBy>(SortBy.NONE)
   const [filterByCountry, setFilterByCountry] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
-  const originalUsers = useRef<User[]>([])
-
-  useEffect(() => {
-    setLoading(true)
-    setError(false)
-    
-    fetchUsers(currentPage)
-      .then(results => {
-        const updatedUsers = users.concat(results)
-        setUsers(updatedUsers)
-        originalUsers.current = updatedUsers
-      })
-      .catch(error => {
-        setError(true)
-        console.error(error)
-      })
-      .finally(() => setLoading(false))
-  }, [currentPage])
 
   const toggleRowsColors = () => {
     setColorRows(prevState => !prevState)
@@ -75,22 +53,9 @@ function App() {
     })
   }, [filteredUsers, sorting])
 
-  const handleDelete = (id: string) => {
-    const filteredUsers = users.filter(user => user.login.uuid !== id)
-    setUsers(filteredUsers)
-  }
-
-  const handleReset = () => {
-    setUsers(originalUsers.current)
-  }
-
   const handleChangeSort = (sort: SortBy) => {
     setSorting(sort)
   }
-
-  const handleAddPage = () => {
-    setCurrentPage(currentPage => currentPage + 1)
-  } 
 
   return (
     <>
@@ -103,9 +68,6 @@ function App() {
           <button onClick={toggleSortByCountry}>
             {sorting === SortBy.COUNTRY ? 'No ordenar por país' : 'Ordenar por país'}
           </button>
-          <button onClick={handleReset}>
-            Resetear usuarios
-          </button>
           <label htmlFor="filterByCountry">Filtra por país:
             <input id="filterByCountry" type="text" onChange={handleChangeFilterByCountry} />
           </label>
@@ -117,17 +79,19 @@ function App() {
             <UsersTable 
               users={sortedUsers} 
               colorRows={colorRows} 
-              handleDelete={handleDelete} 
               handleChangeSort={handleChangeSort}
             />
-            <button 
-              onClick={handleAddPage}
-            >
-              Cargar más resultados
-            </button>
+            {
+              hasNextPage &&
+              <button 
+                onClick={() => fetchNextPage()}
+              >
+                Cargar más resultados
+              </button>
+            }
           </>
         }
-        {loading && 
+        {isLoading && 
           <ThreeDots
             visible={true}
             height="80"
@@ -138,9 +102,9 @@ function App() {
             wrapperStyle={{margin: '16px'}}
           />
         }
-        {!loading && error && <p>Ha ocurrido un error</p>}
+        {!isLoading && isError && <p>Ha ocurrido un error</p>}
 
-        {!loading && !error && users.length === 0 && <p>No hay usuarios</p>}
+        {!isLoading && !isError && users.length === 0 && <p>No hay usuarios</p>}
       </main>
     </>
   )

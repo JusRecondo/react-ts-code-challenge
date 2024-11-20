@@ -1,14 +1,12 @@
 import { SortBy, User } from "../lib/types"
-import { FiTrash2 } from "react-icons/fi"
 
 interface Props {
   users: User[];
   colorRows: boolean;
-  handleDelete: (id: string) => void;
   handleChangeSort: (sort: SortBy) => void;
 }
 
-const UsersTable: React.FC<Props> = ({ users, colorRows, handleDelete, handleChangeSort }) => {
+const UsersTable: React.FC<Props> = ({ users, colorRows, handleChangeSort }) => {
   return (
     <table className={colorRows ? 'color-rows' : ''}>
       <thead>
@@ -38,7 +36,6 @@ const UsersTable: React.FC<Props> = ({ users, colorRows, handleDelete, handleCha
           >
             Pais
           </th>
-          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -56,14 +53,6 @@ const UsersTable: React.FC<Props> = ({ users, colorRows, handleDelete, handleCha
               </td>
               <td>
                 {user.location.country}
-              </td>
-              <td>
-                <button 
-                  onClick={() => handleDelete(user.login.uuid)} 
-                  aria-label="Eliminar usuario"
-                >
-                  <FiTrash2 />
-                </button>
               </td>
             </tr>
           ))
