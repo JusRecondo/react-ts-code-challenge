@@ -10,25 +10,29 @@ function App() {
   const [colorRows, setColorRows] = useState(false)
   const [sorting, setSorting] = useState<SortBy>(SortBy.NONE)
   const [filterByCountry, setFilterByCountry] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
   const originalUsers = useRef<User[]>([])
 
   useEffect(() => {
     setLoading(true)
-    fetch('https://randomuser.me/api/?results=10')
+    setError(false)
+    
+    fetch(`https://randomuser.me/api/?results=10&seed=test&page=${currentPage}`)
     .then(res => {
       if (!res.ok) throw new Error ('Error fetching users')
       return res.json()
     })
     .then(data => {
-      setUsers(data.results)
-      originalUsers.current = data.results
+      const updatedUsers = users.concat(data.results)
+      setUsers(updatedUsers)
+      originalUsers.current = updatedUsers
     })
     .catch(error => {
       setError(true)
       console.error(error)
     })
     .finally(() => setLoading(false))
-  }, [])
+  }, [currentPage])
 
   const toggleRowsColors = () => {
     setColorRows(prevState => !prevState)
@@ -79,6 +83,10 @@ function App() {
     setSorting(sort)
   }
 
+  const handleAddPage = () => {
+    setCurrentPage(currentPage => currentPage + 1)
+  } 
+
   return (
     <>
       <header>
@@ -99,8 +107,22 @@ function App() {
         </div>
       </header>
       <main>
-        {!error ?
-          loading ?
+        {users.length > 0 &&
+          <>
+            <UsersTable 
+              users={sortedUsers} 
+              colorRows={colorRows} 
+              handleDelete={handleDelete} 
+              handleChangeSort={handleChangeSort}
+            />
+            <button 
+              onClick={handleAddPage}
+            >
+              Cargar más resultados
+            </button>
+          </>
+        }
+        {loading && 
           <ThreeDots
             visible={true}
             height="80"
@@ -110,19 +132,10 @@ function App() {
             ariaLabel="three-dots-loading"
             wrapperStyle={{margin: '16px'}}
           />
-          :
-          users.length > 0 ?
-          <UsersTable 
-            users={sortedUsers} 
-            colorRows={colorRows} 
-            handleDelete={handleDelete} 
-            handleChangeSort={handleChangeSort}
-          />
-          :
-          <p>No hay usuarios</p>
-        :
-        <p>Ha ocurrido un error</p>               
         }
+        {!loading && error && <p>Ha ocurrido un error</p>}
+
+        {!loading && !error && users.length === 0 && <p>No hay usuarios</p>}
       </main>
     </>
   )
