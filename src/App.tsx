@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { SortBy, User } from "./lib/types"
 import UsersTable from "./components/UsersTable"
+import { ThreeDots } from "react-loader-spinner"
 
 function App() {
   const [users, setUsers] = useState<User[]>([])
@@ -92,7 +93,15 @@ function App() {
       </header>
       <main>
         {loading ?
-          <p>Loading...</p>
+          <ThreeDots
+            visible={true}
+            height="80"
+            width="80"
+            color="#fbfbfb"
+            radius="9"
+            ariaLabel="three-dots-loading"
+            wrapperStyle={{margin: '16px'}}
+          />
           :
           <UsersTable 
             users={sortedUsers} 
