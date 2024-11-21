@@ -114,11 +114,13 @@ function App() {
               handleDelete={handleDelete} 
               handleChangeSort={handleChangeSort}
             />
-            <button 
-              onClick={handleAddPage}
-            >
-              Cargar más resultados
-            </button>
+            {currentPage < 3 &&
+               <button 
+               onClick={handleAddPage}
+             >
+               Cargar más resultados
+              </button>
+            }
           </>
         }
         {loading && 
