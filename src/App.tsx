@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { SortBy, User } from "./lib/types"
 import UsersTable from "./components/UsersTable"
 import { ThreeDots } from "react-loader-spinner"
+import { fetchUsers } from "./services/users"
 
 function App() {
   const [users, setUsers] = useState<User[]>([])
@@ -17,15 +18,13 @@ function App() {
     setLoading(true)
     setError(false)
     
-    fetch(`https://randomuser.me/api/?results=10&seed=test&page=${currentPage}`)
-    .then(res => {
-      if (!res.ok) throw new Error ('Error fetching users')
-      return res.json()
-    })
+    fetchUsers(currentPage)
     .then(data => {
-      const updatedUsers = users.concat(data.results)
-      setUsers(updatedUsers)
-      originalUsers.current = updatedUsers
+      setUsers(prevUsers => {
+        const updatedUsers = prevUsers.concat(data)
+        originalUsers.current = updatedUsers
+        return(updatedUsers)
+      })
     })
     .catch(error => {
       setError(true)
